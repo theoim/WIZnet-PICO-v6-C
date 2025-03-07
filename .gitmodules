@@ -4,3 +4,6 @@
 [submodule "libraries/pico-sdk"]
 	path = libraries/pico-sdk
 	url = https://github.com/raspberrypi/pico-sdk.git
+[submodule "libraries/io6Library"]
+	path = libraries/io6Library
+	url = https://github.com/theoim/io6Library.git
