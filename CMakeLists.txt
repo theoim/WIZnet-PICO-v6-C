@@ -1,53 +1,30 @@
 # CMake minimum required version
 cmake_minimum_required(VERSION 3.12)
- 
+
 # Set board
-#set(BOARD_NAME WIZnet_Ethernet_HAT)
-#set(BOARD_NAME W5100S_EVB_PICO)
-# set(BOARD_NAME W5500_EVB_PICO)
-#set(BOARD_NAME W55RP20_EVB_PICO)
-# set(BOARD_NAME W5100S_EVB_PICO2)
-# set(BOARD_NAME W5500_EVB_PICO2)
+# set(BOARD_NAME W6100_EVB_PICO)
+# set(BOARD_NAME W6100_EVB_PICO2)
+# set(BOARD_NAME W6300_EVB_PICO)
 set(BOARD_NAME W6300_EVB_PICO2)
 
-if(${BOARD_NAME} STREQUAL WIZnet_Ethernet_HAT)
-    #set(PICO_PLATFORM rp2350) #If you are using WIZnet_ethernet_HAT with Pico2, uncomment it.
-    set(WIZNET_CHIP W5100S)
-    add_definitions(-D_WIZCHIP_=W5100S)
-    add_definitions(-DDEVICE_BOARD_NAME=WIZnet_Ethernet_HAT)
-    
-elseif(${BOARD_NAME} STREQUAL W5100S_EVB_PICO)
-    set(WIZNET_CHIP W5100S)
-    add_definitions(-D_WIZCHIP_=W5100S)
-    add_definitions(-DDEVICE_BOARD_NAME=W5100S_EVB_PICO)
-    
-elseif(${BOARD_NAME} STREQUAL W5500_EVB_PICO)
-    set(WIZNET_CHIP W5500)
-    add_definitions(-D_WIZCHIP_=W5500)
-    add_definitions(-DDEVICE_BOARD_NAME=W5500_EVB_PICO)
+# Set ethernet chip
+if(${BOARD_NAME} STREQUAL W6100_EVB_PICO)
+    set(WIZNET_CHIP W6100)
+    add_definitions(-D_WIZCHIP_=W6100)
 
-elseif(${BOARD_NAME} STREQUAL W55RP20_EVB_PICO)
-    set(WIZNET_CHIP W5500)
-    add_definitions(-D_WIZCHIP_=W5500)
-    add_definitions(-DDEVICE_BOARD_NAME=W55RP20_EVB_PICO)
+elseif(${BOARD_NAME} STREQUAL W6100_EVB_PICO2)
+    set(PICO_PLATFORM rp2350)
+    set(WIZNET_CHIP W6100)
+    add_definitions(-D_WIZCHIP_=W6100)
 
-elseif(${BOARD_NAME} STREQUAL W5100S_EVB_PICO2)
-    set(PICO_PLATFORM rp2350)
-    set(WIZNET_CHIP W5100S)
-    add_definitions(-D_WIZCHIP_=W5100S)
-    add_definitions(-DDEVICE_BOARD_NAME=W5100S_EVB_PICO2)
-    
-elseif(${BOARD_NAME} STREQUAL W5500_EVB_PICO2)
-    set(PICO_PLATFORM rp2350)
-    set(WIZNET_CHIP W5500)
-    add_definitions(-D_WIZCHIP_=W5500)
-    add_definitions(-DDEVICE_BOARD_NAME=W5500_EVB_PICO2)
+elseif(${BOARD_NAME} STREQUAL W6300_EVB_PICO)
+    set(WIZNET_CHIP W6300)
+    add_definitions(-D_WIZCHIP_=W6300)
 
 elseif(${BOARD_NAME} STREQUAL W6300_EVB_PICO2)
     set(PICO_PLATFORM rp2350)
     set(WIZNET_CHIP W6300)
     add_definitions(-D_WIZCHIP_=W6300)
-    add_definitions(-DDEVICE_BOARD_NAME=W6300_EVB_PICO2)
 
 else() 
     message(FATAL_ERROR "BOARD_NAME is wrong = ${BOARD_NAME}")
@@ -63,6 +40,7 @@ endif()
 include(pico_sdk_import.cmake)
 include(wiznet_pico_c_sdk_version.cmake)
 
+
 # Set project name
 set(PROJECT_NAME WIZNET-PICO-C)
 
@@ -75,65 +53,12 @@ set(CMAKE_CXX_STANDARD 17)
 # Initialize the SDK
 pico_sdk_init()
 
-
-
-
-
-
-
-
-
-
-# Set ethernet chip interface
-# Support 2 ethernet chip interfaces: SPI, PIO
-set(WIZNET_CHIP_INTERFACE PIO)
-
-if(${WIZNET_CHIP_INTERFACE} STREQUAL SPI)
-    add_definitions(-D_WIZCHIP_IF_=SPI)
-elseif(${WIZNET_CHIP_INTERFACE} STREQUAL PIO)
-    add_definitions(-D_WIZCHIP_IF_=PIO)
-else()
-    message(FATAL_ERROR "WIZNET_CHIP_INTERFACE is wrong = ${WIZNET_CHIP_INTERFACE}")
-endif()
-
-message(STATUS "WIZNET_CHIP_INTERFACE = ${WIZNET_CHIP_INTERFACE}")
-
-# Set PIO interface
-# Support 4 PIO interfaces: SPI_SINGLE, SPI_DUAL, SPI_QUAD, SPI_OCTAL
-set(PIO_INTERFACE SPI_QUAD)
-
-if(${PIO_INTERFACE} STREQUAL SPI_SINGLE)
-    add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_SINGLE_MODE)
-elseif(${PIO_INTERFACE} STREQUAL SPI_DUAL)
-    add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_DUAL_MODE)
-elseif(${PIO_INTERFACE} STREQUAL SPI_QUAD)
-    add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_QUAD_MODE)
-elseif(${PIO_INTERFACE} STREQUAL SPI_OCTAL)
-    add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_OCTAL_MODE)
-else()
-    message(FATAL_ERROR "PIO_INTERFACE is wrong = ${PIO_INTERFACE}")
-endif()
-
-message(STATUS "PIO_INTERFACE = ${PIO_INTERFACE}")
-
 # Set the project root directory if it's not already defined, as may happen if
 # the tests folder is included directly by a parent project, without including
 # the top level CMakeLists.txt.
+
 if(NOT DEFINED WIZNET_DIR)
-    #set(WIZNET_DIR ${CMAKE_SOURCE_DIR}/libraries/ioLibrary_Driver)
-    set(WIZNET_DIR ${CMAKE_SOURCE_DIR}/libraries/ioLibrary6)
-    message(STATUS "WIZNET_DIR = ${WIZNET_DIR}")
-endif()
-
-
-
-
-
-# Set the project root directory if it's not already defined, as may happen if
-# the tests folder is included directly by a parent project, without including
-# the top level CMakeLists.txt.
-if(NOT DEFINED WIZNET_DIR)
-    set(WIZNET_DIR ${CMAKE_SOURCE_DIR}/libraries/ioLibrary_Driver)
+    set(WIZNET_DIR ${CMAKE_SOURCE_DIR}/libraries/io6Library)
     message(STATUS "WIZNET_DIR = ${WIZNET_DIR}")
 endif()
 
@@ -161,6 +86,40 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/libraries)
 add_subdirectory(${MBEDTLS_DIR})
 add_subdirectory(${PORT_DIR})
 
+if(${WIZNET_CHIP} STREQUAL W6300)
+    # Set ethernet chip interface
+    # Support 2 ethernet chip interfaces: SPI, PIO
+    set(WIZNET_CHIP_INTERFACE PIO)
+
+    if(${WIZNET_CHIP_INTERFACE} STREQUAL SPI)
+        add_definitions(-D_WIZCHIP_IF_=SPI)
+    elseif(${WIZNET_CHIP_INTERFACE} STREQUAL PIO)
+        add_definitions(-D_WIZCHIP_IF_=PIO)
+    else()
+        message(FATAL_ERROR "WIZNET_CHIP_INTERFACE is wrong = ${WIZNET_CHIP_INTERFACE}")
+    endif()
+
+    message(STATUS "WIZNET_CHIP_INTERFACE = ${WIZNET_CHIP_INTERFACE}")
+
+    # Set PIO interface
+    # Support 4 PIO interfaces: SPI_SINGLE, SPI_DUAL, SPI_QUAD, SPI_OCTAL
+    set(PIO_INTERFACE SPI_QUAD)
+
+    if(${PIO_INTERFACE} STREQUAL SPI_SINGLE)
+        add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_SINGLE_MODE)
+    elseif(${PIO_INTERFACE} STREQUAL SPI_DUAL)
+        add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_DUAL_MODE)
+    elseif(${PIO_INTERFACE} STREQUAL SPI_QUAD)
+        add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_QUAD_MODE)
+    elseif(${PIO_INTERFACE} STREQUAL SPI_OCTAL)
+        add_definitions(-D_WIZCHIP_PIO_MODE_=QSPI_OCTAL_MODE)
+    else()
+        message(FATAL_ERROR "PIO_INTERFACE is wrong = ${PIO_INTERFACE}")
+    endif()
+
+    message(STATUS "PIO_INTERFACE = ${PIO_INTERFACE}")
+endif()
+
 # Set compile options
 add_compile_options(
         -Wall
@@ -168,3 +127,5 @@ add_compile_options(
         -Wno-unused-function # we have some for the docs that aren't called
         -Wno-maybe-uninitialized
         )
+
+
