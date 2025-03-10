@@ -5,11 +5,15 @@ add_executable(${TARGET_NAME}
         )
 
 target_link_libraries(${TARGET_NAME}
+        pico_stdlib
+        hardware_spi
+        hardware_dma
+        hardware_pio
         ETHERNET_FILES
-        WIZCHIP_FILES
-        LOOPBACK_FILES
+        IOLIBRARY_FILES
         PORT_COMMON_FILES
-        W6300_FILES
+        LOOPBACK_FILES
+        TIMER_FILES        
         )
 
 pico_enable_stdio_usb(${TARGET_NAME} 1)

@@ -1,7 +1,7 @@
 # add_subdirectory(dhcp_dns)
 # add_subdirectory(ftp)
 # add_subdirectory(http)
-add_subdirectory(W6300_Test)
+# add_subdirectory(W6300_Test)
 # add_subdirectory(w6300_loopback)
 # add_subdirectory(winbond_flash_read_write)
 # add_subdirectory(led_toggle)

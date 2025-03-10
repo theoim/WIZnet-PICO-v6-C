@@ -15,16 +15,13 @@
 
 #include "wizchip_conf.h"
 #include "w6x00_spi.h"
-#include <FreeRTOS.h>
-#include <task.h>
-#include <semphr.h>
 
 #if (_WIZCHIP_ == W6300)
 #include "wizchip_pio_spi.h"
-// #include "pico/stdlib.h"
-// #include "pico/binary_info.h"
-// #include "pico/critical_section.h"
-// #include "hardware/dma.h"
+#include "pico/stdlib.h"
+#include "pico/binary_info.h"
+#include "pico/critical_section.h"
+#include "hardware/dma.h"
 #endif
 
 /**
@@ -33,7 +30,7 @@
  * ----------------------------------------------------------------------------------------------------
  */
 static critical_section_t g_wizchip_cri_sec;
-static xSemaphoreHandle wizchip_critical_sem = NULL;
+
 #ifdef USE_SPI_DMA
 static uint dma_tx;
 static uint dma_rx;
@@ -170,24 +167,14 @@ static void wizchip_write_burst(uint8_t *pBuf, uint16_t len)
 }
 #endif
 
-// static void wizchip_critical_section_lock(void)
-// {
-//     critical_section_enter_blocking(&g_wizchip_cri_sec);
-// }
-
-// static void wizchip_critical_section_unlock(void)
-// {
-//     critical_section_exit(&g_wizchip_cri_sec);
-// }
-
 static void wizchip_critical_section_lock(void)
 {
-    xSemaphoreTake(wizchip_critical_sem, portMAX_DELAY);
+    critical_section_enter_blocking(&g_wizchip_cri_sec);
 }
 
 static void wizchip_critical_section_unlock(void)
 {
-    xSemaphoreGive(wizchip_critical_sem);
+    critical_section_exit(&g_wizchip_cri_sec);
 }
 
 void wizchip_spi_initialize(void)
@@ -235,18 +222,11 @@ void wizchip_spi_initialize(void)
 
 }
 
-// void wizchip_cris_initialize(void)
-// {
-//     critical_section_init(&g_wizchip_cri_sec);
-//     reg_wizchip_cris_cbfunc(wizchip_critical_section_lock, wizchip_critical_section_unlock);
-// }
-
 void wizchip_cris_initialize(void)
 {
-    wizchip_critical_sem = xSemaphoreCreateCounting((unsigned portBASE_TYPE)0x7fffffff, (unsigned portBASE_TYPE)1);
+    critical_section_init(&g_wizchip_cri_sec);
     reg_wizchip_cris_cbfunc(wizchip_critical_section_lock, wizchip_critical_section_unlock);
 }
-
 
 void wizchip_initialize(void)
 {
@@ -275,9 +255,9 @@ void wizchip_initialize(void)
 #elif (_WIZCHIP_ == W5500)
     uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
 #elif (_WIZCHIP_ == W6100)
-    uint8_t memsize[2][8] = {{2, 2, 2, 2, 0, 0, 0, 0}, {2, 2, 2, 2, 0, 0, 0, 0}};
+    uint8_t memsize[2][8] = {{2, 2, 2, 2, 2, 2, 2, 2}, {2, 2, 2, 2, 2, 2, 2, 2}};
 #elif (_WIZCHIP_ == W6300)
-uint8_t memsize[2][8] = {{2, 2, 2, 2, 0, 0, 0, 0}, {2, 2, 2, 2, 0, 0, 0, 0}};
+uint8_t memsize[2][8] = {{16, 0, 0, 0, 0, 0, 0, 0}, {16, 0, 0, 0, 0, 0, 0, 0}};
 #endif
 
     if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1)

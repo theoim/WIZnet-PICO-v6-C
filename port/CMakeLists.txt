@@ -5,6 +5,7 @@ target_sources(IOLIBRARY_FILES PUBLIC
         ${PORT_DIR}/io6Library/src/w6x00_spi.c
         ${PORT_DIR}/io6Library/src/w6x00_gpio_irq.c
         )
+
 if(${WIZNET_CHIP} STREQUAL W6300)
         pico_generate_pio_header(IOLIBRARY_FILES ${PORT_DIR}/io6Library/src/wizchip_pio_spi.pio)
 
@@ -17,7 +18,6 @@ endif()
 target_include_directories(IOLIBRARY_FILES PUBLIC
         ${WIZNET_DIR}/Ethernet
         ${PORT_DIR}/io6Library/inc
-        ${PORT_DIR}/FreeRTOS-Kernel/inc
         ${PORT_DIR}
         )
 
@@ -51,7 +51,10 @@ target_include_directories(PORT_COMMON_FILES PUBLIC
         ${PORT_DIR}
         )
 
-target_link_libraries(PORT_COMMON_FILES PRIVATE
+target_link_libraries(PORT_COMMON_FILES PUBLIC
         pico_stdlib
         hardware_clocks
+        hardware_spi
+        hardware_dma
+        hardware_pio
         )
